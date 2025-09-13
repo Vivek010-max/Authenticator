@@ -10,14 +10,12 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  RefreshCw,
 } from "lucide-react";
 
 const GuestVerification = () => {
   const [verifying, setVerifying] = useState(false);
   const [verificationResults, setVerificationResults] = useState(null);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const [stepStates, setStepStates] = useState(["resting", "resting", "resting"]);
 
   const fileInputRef = useRef(null);
@@ -37,13 +35,7 @@ const GuestVerification = () => {
     setStepStates([success ? "success" : "failure", success ? "success" : "failure", success ? "success" : "failure"]);
   };
 
-  const handleFileSelect = (files) => {
-    const fileArray = Array.from(files).slice(0, 1); // Only 1 file supported
-    setSelectedFiles(fileArray);
-    setVerificationResults(null);
-    setStepStates(["resting", "resting", "resting"]);
-  };
-
+  // Handle drag events
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -51,71 +43,76 @@ const GuestVerification = () => {
     else if (e.type === "dragleave") setDragActive(false);
   };
 
+  // Handle drop
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileSelect(e.dataTransfer.files);
+      fileInputRef.current.files = e.dataTransfer.files;
+      setVerificationResults(null);
+      setStepStates(["resting", "resting", "resting"]);
     }
   };
 
+  // Handle verification
   const handleVerification = async () => {
-    if (selectedFiles.length === 0) {
-      alert("Please upload a certificate image.");
-      return;
-    }
+    const file = fileInputRef.current?.files[0];
+    if (!file) return alert("Please upload a certificate image.");
+
     const formData = new FormData();
-    formData.append("image", selectedFiles[0]);
+    formData.append("image", file);
 
     setVerifying(true);
     setStepStates(["checking", "resting", "resting"]);
     try {
-      const response = await axios.post(`${Base_url}/verify_certificate/`, formData, {
+      const { data } = await axios.post(`${Base_url}/verify_certificate/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setVerificationResults(response.data);
-      runVerificationStepper(response.data);
-    } catch (error) {
-      console.error("Verification failed:", error);
-      alert(error?.response?.data?.error || "Verification failed.");
+      setVerificationResults(data);
+      await runVerificationStepper(data);
+    } catch (err) {
+      console.error("Verification failed:", err);
+      alert(err?.response?.data?.error || "Verification failed.");
       setStepStates(["failure", "resting", "resting"]);
     } finally {
       setVerifying(false);
     }
   };
 
+  // Handle issuing
   const handleIssue = async () => {
-    if (selectedFiles.length === 0) {
-      alert("Please upload a certificate image.");
-      return;
-    }
+    const file = fileInputRef.current?.files[0];
+    if (!file) return alert("Please upload a certificate image.");
+
     const formData = new FormData();
-    formData.append("image", selectedFiles[0]);
+    formData.append("image", file);
 
     setVerifying(true);
     try {
-      const response = await axios.post(`${Base_url}/issue_certificate/`, formData, {
+      const { data } = await axios.post(`${Base_url}/issue_certificate/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setVerificationResults(response.data);
-      runVerificationStepper(response.data);
-    } catch (error) {
-      console.error("Issuing failed:", error);
-      alert(error?.response?.data?.error || "Issuing failed.");
+      setVerificationResults(data);
+      await runVerificationStepper(data);
+    } catch (err) {
+      console.error("Issuing failed:", err);
+      alert(err?.response?.data?.error || "Issuing failed.");
     } finally {
       setVerifying(false);
     }
   };
 
+  // File icons
   const getFileIcon = (filename) => {
     if (!filename) return <FileText className="h-6 w-6 text-gray-500" />;
     const ext = filename.split(".").pop().toLowerCase();
     if (["pdf"].includes(ext)) return <FileText className="h-6 w-6 text-red-500" />;
-    if (["jpg","jpeg","png","gif","tiff"].includes(ext)) return <Image className="h-6 w-6 text-blue-500" />;
+    if (["jpg", "jpeg", "png", "gif", "tiff"].includes(ext)) return <Image className="h-6 w-6 text-blue-500" />;
     return <FileText className="h-6 w-6 text-gray-500" />;
   };
 
+  // Status icons
   const getStatusIcon = (status) => {
     if (!status) status = "unknown";
     status = status.toLowerCase();
@@ -142,13 +139,12 @@ const GuestVerification = () => {
               handleDrag={handleDrag}
               handleDrop={handleDrop}
               fileInputRef={fileInputRef}
-              handleFileSelect={handleFileSelect}
-              selectedFiles={selectedFiles}
+              selectedFiles={fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : []}
               handleVerification={handleVerification}
               verifying={verifying}
               getFileIcon={getFileIcon}
             />
-            {selectedFiles.length > 0 && (
+            {fileInputRef.current?.files?.length > 0 && (
               <button
                 onClick={handleIssue}
                 className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
