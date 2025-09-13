@@ -1,12 +1,7 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import {
-  Upload,
-  FileText,
-  RefreshCw,
-  CheckCircle,
-} from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
+import { Upload, FileText, RefreshCw, CheckCircle } from "lucide-react";
 
 const UploadBox = ({
   dragActive,
@@ -17,10 +12,10 @@ const UploadBox = ({
   showFallbackInput,
   fallbackInput,
   setFallbackInput,
-  selectedFiles,
+  selectedFiles = [], // ✅ default to empty array
   handleVerification,
   verifying,
-  verificationResults,
+  verificationResults = [], // ✅ default to empty array
   handleClearResults,
   guestSessionId,
   endSession,
@@ -35,8 +30,8 @@ const UploadBox = ({
         <div
           className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
             dragActive
-              ? 'border-blue-500 bg-red-50 dark:bg-blue-900/20'
-              : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-gray-100'
+              ? "border-blue-500 bg-red-50 dark:bg-blue-900/20"
+              : "border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-gray-100"
           }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -81,9 +76,11 @@ const UploadBox = ({
           <p className="text-xs text-gray-400">Max 10 files, 10MB each</p>
         </div>
 
-        {selectedFiles.length > 0 && (
+        {Array.isArray(selectedFiles) && selectedFiles.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium mb-2">Selected Files ({selectedFiles.length})</h4>
+            <h4 className="text-sm font-medium mb-2">
+              Selected Files ({selectedFiles.length})
+            </h4>
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {selectedFiles.map((file, index) => (
                 <div key={index} className="flex items-center space-x-2 text-sm">
@@ -95,13 +92,13 @@ const UploadBox = ({
           </div>
         )}
 
-        <div className="mt-6  space-y-2">
+        <div className="mt-6 space-y-2">
           <Button
             onClick={handleVerification}
             disabled={
-              (!showFallbackInput && selectedFiles.length === 0) ||
+              (!showFallbackInput && (!Array.isArray(selectedFiles) || selectedFiles.length === 0)) ||
               verifying ||
-              (showFallbackInput && fallbackInput.trim() === '')
+              (showFallbackInput && fallbackInput.trim() === "")
             }
             className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100 border border-white dark:border-black flex items-center justify-center space-x-2"
           >
@@ -112,13 +109,13 @@ const UploadBox = ({
               </>
             ) : (
               <>
-                <CheckCircle className="h-4  w-4 mr-2" />
+                <CheckCircle className="h-4 w-4 mr-2" />
                 Verify Certificates
               </>
             )}
           </Button>
 
-          {verificationResults.length > 0 && (
+          {Array.isArray(verificationResults) && verificationResults.length > 0 && (
             <Button onClick={handleClearResults} variant="outline" className="w-full">
               Clear Results
             </Button>
