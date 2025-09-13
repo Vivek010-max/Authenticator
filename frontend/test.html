@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate Authenticator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h2 { margin-top: 30px; }
+    form { margin-bottom: 30px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+    input[type="file"] { margin-bottom: 15px; }
+    button { padding: 8px 16px; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Hackathon Certificate Authenticator</h1>
+
+  <!-- Issue Certificate Form -->
+  <h2>Issue Certificate</h2>
+  <form id="issueForm" enctype="multipart/form-data">
+    <input type="file" name="image" required>
+    <button type="submit">Issue</button>
+  </form>
+  <pre id="issueResult"></pre>
+
+  <!-- Verify Certificate Form -->
+  <h2>Verify Certificate</h2>
+  <form id="verifyForm" enctype="multipart/form-data">
+    <input type="file" name="image" required>
+    <button type="submit">Verify</button>
+  </form>
+  <pre id="verifyResult"></pre>
+
+  <script>
+    // Generic function to handle form submissions
+    async function handleForm(formId, url, resultId) {
+      const form = document.getElementById(formId);
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            body: formData
+          });
+          const data = await response.json();
+          document.getElementById(resultId).textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          document.getElementById(resultId).textContent = "Error: " + err;
+        }
+      });
+    }
+
+    // Bind forms to backend endpoints
+    handleForm("issueForm", "http://127.0.0.1:8000/api/issue_certificate/", "issueResult");
+    handleForm("verifyForm", "http://127.0.0.1:8000/api/verify_certificate/", "verifyResult");
+  </script>
+</body>
+</html>
