@@ -4,24 +4,19 @@ import PublicNavbar from "../../components/PublicNavbar";
 import UploadBox from "../../components/Guest/UploadBox.jsx";
 import VerificationResults from "../../components/Guest/VerificationResults.jsx";
 import VerticalStepper from "../../components/Guest/VerticalStepper.jsx";
-import {
-  FileText,
-  Image,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-} from "lucide-react";
+import { FileText, Image, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 
 const GuestVerification = () => {
   const [verifying, setVerifying] = useState(false);
   const [verificationResults, setVerificationResults] = useState(null);
   const [dragActive, setDragActive] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [stepStates, setStepStates] = useState(["resting", "resting", "resting"]);
 
   const fileInputRef = useRef(null);
   const Base_url = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
-  // Stepper animation based on backend verdict
+  // Stepper animation
   const runVerificationStepper = async (result) => {
     const verdict = result?.final_verdict?.toLowerCase();
     const success = verdict === "verified" || verdict === "issued";
@@ -35,7 +30,15 @@ const GuestVerification = () => {
     setStepStates([success ? "success" : "failure", success ? "success" : "failure", success ? "success" : "failure"]);
   };
 
-  // Handle drag events
+  // Handle file input selection
+  const handleFileSelect = (files) => {
+    const fileArray = Array.from(files).slice(0, 1); // Only allow 1 file
+    setSelectedFiles(fileArray);
+    setVerificationResults(null);
+    setStepStates(["resting", "resting", "resting"]);
+  };
+
+  // Drag events
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -43,25 +46,21 @@ const GuestVerification = () => {
     else if (e.type === "dragleave") setDragActive(false);
   };
 
-  // Handle drop
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      fileInputRef.current.files = e.dataTransfer.files;
-      setVerificationResults(null);
-      setStepStates(["resting", "resting", "resting"]);
+      handleFileSelect(e.dataTransfer.files);
     }
   };
 
-  // Handle verification
+  // Verification
   const handleVerification = async () => {
-    const file = fileInputRef.current?.files[0];
-    if (!file) return alert("Please upload a certificate image.");
+    if (selectedFiles.length === 0) return alert("Please upload a certificate.");
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("image", selectedFiles[0]);
 
     setVerifying(true);
     setStepStates(["checking", "resting", "resting"]);
@@ -72,7 +71,7 @@ const GuestVerification = () => {
       setVerificationResults(data);
       await runVerificationStepper(data);
     } catch (err) {
-      console.error("Verification failed:", err);
+      console.error(err);
       alert(err?.response?.data?.error || "Verification failed.");
       setStepStates(["failure", "resting", "resting"]);
     } finally {
@@ -80,13 +79,12 @@ const GuestVerification = () => {
     }
   };
 
-  // Handle issuing
+  // Issue certificate
   const handleIssue = async () => {
-    const file = fileInputRef.current?.files[0];
-    if (!file) return alert("Please upload a certificate image.");
+    if (selectedFiles.length === 0) return alert("Please upload a certificate.");
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("image", selectedFiles[0]);
 
     setVerifying(true);
     try {
@@ -96,7 +94,7 @@ const GuestVerification = () => {
       setVerificationResults(data);
       await runVerificationStepper(data);
     } catch (err) {
-      console.error("Issuing failed:", err);
+      console.error(err);
       alert(err?.response?.data?.error || "Issuing failed.");
     } finally {
       setVerifying(false);
@@ -139,12 +137,13 @@ const GuestVerification = () => {
               handleDrag={handleDrag}
               handleDrop={handleDrop}
               fileInputRef={fileInputRef}
-              selectedFiles={fileInputRef.current?.files ? Array.from(fileInputRef.current.files) : []}
+              selectedFiles={selectedFiles}
               handleVerification={handleVerification}
               verifying={verifying}
               getFileIcon={getFileIcon}
+              handleFileSelect={(files) => handleFileSelect(files)}
             />
-            {fileInputRef.current?.files?.length > 0 && (
+            {selectedFiles.length > 0 && (
               <button
                 onClick={handleIssue}
                 className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg"
