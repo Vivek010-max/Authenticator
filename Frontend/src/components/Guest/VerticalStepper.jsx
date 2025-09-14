@@ -76,7 +76,7 @@ const VerticalStepper = ({ stepStates = [] }) => {
           return (
             <li key={idx} className="flex w-full  mb-8 last:mb-0">
               {/* Progress Line Connector */}
-              <div className="absolute left-[2.5rem] h-full w-0.5">
+              <div className="absolute top-2 left-[2.2rem] h-full w-0.5">
                 <div className={`h-1/2 w-full transition-all duration-500 ease-in-out ${isPreviousStepCompleted ? getStatusClasses(stepStates[idx-1]) : 'bg-transparent'}`}></div>
                 <div className={`h-1/2 w-full transition-all duration-500 ease-in-out ${isCompleted ? getStatusClasses(state) : 'bg-transparent'}`}></div>
               </div>

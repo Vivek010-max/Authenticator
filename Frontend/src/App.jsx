@@ -102,19 +102,17 @@ function App() {
         <Route
           path="/admin/institutes"
           element={
-            !authLoading && currentUser && hasPermission('/admin', currentUser)
-              ? <InstituteManagement />
-              : <Navigate to="/login" replace />
+            <InstituteManagement />
+
+             
           }
         />
 
         {/* Institute Routes */}
         <Route
           path="/institute/dashboard"
-          element={
-            !authLoading && currentUser && hasPermission('/institute', currentUser)
-              ? <InstituteDashboard />
-              : <Navigate to="/login" replace />
+          element={ <InstituteDashboard />
+              
           }
         />
 

@@ -84,7 +84,9 @@ const RoleBasedNavbar = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
               <img className="h-8 rounded-2xl w-8" src="/logo.ico" alt="Trustify Logo" />
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
+              <span onClick={
+() => window.location.href = '/' 
+              }  className="ml-2 text-xl font-bold text-gray-900 dark:text-white hover:cursor-pointer">
                 Trustify
               </span>
             </div>
