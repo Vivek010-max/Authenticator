@@ -5,6 +5,8 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import IssueCertificate from "./pages/Institute/IssueCertificate";
+
 import Landing from "./pages/Landing";
 import { useAuth } from "./context/AuthContex";
 import UploadVerification from "./pages/UploadVerification";
@@ -22,13 +24,15 @@ import CertificatesList from "./pages/Institute/CertificatesList";
 
 // Guest Pages
 import GuestVerification from "./pages/Guest/GuestVerification";
+import Issuer from "./pages/Guest/Issuer";
+
 
 function App() {
   const { currentUser, authLoading } = useAuth();
   const location = useLocation();
 
   // Pages where we don't want the main Navbar
-  const pagesWithoutNavbar = ["/", "/login", "/signup", "/upload-verification"];
+  const pagesWithoutNavbar = ["/", "/login", "/issue" , "/signup", "/upload-verification"];
 
   // Get the appropriate redirect path based on user role
   const getRedirectPath = (user) => {
@@ -133,6 +137,19 @@ function App() {
               : <Navigate to="/login" replace />
           }
         />
+
+        <Route
+          path="/institute/issue"
+          element={
+            <IssueCertificate />
+             
+          }
+        />
+
+                <Route path="/issue" element={<Issuer />} />
+
+
+        
 
         {/* Fallback Routes */}
         <Route

@@ -77,7 +77,7 @@ const RoleBasedNavbar = () => {
   const navigationItems = getNavigationItems();
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <nav className="bg-white dark:bg-black/40 shadow-sm border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and Brand */}
@@ -108,10 +108,16 @@ const RoleBasedNavbar = () => {
               );
             })}
           </div>
-            <div className='flex items-center rounded-2xl border border-gray-300 dark:border-gray-600'> 
-            <div  className='flex items-center mx-4'>
-            <ToggelSwitch />
-            </div>
+            <div className='flex items-center rounded-2xl '> 
+            
+            <button>
+            <a href="/upload-verification" onClick={() => handleLinkClick('Upload Certificate')} className="text-gray-700 dark:text-gray-300 
+             transition-colors duration-200 hover:text-purple-300">
+                Upload Certificate
+              </a>
+            </button>
+            
+
             </div>
 
           {/* User Menu */}
@@ -127,6 +133,7 @@ const RoleBasedNavbar = () => {
                 </p>
               </div>
             </div>
+            <ToggelSwitch />
             <Button
               onClick={handleLogout}
               variant="outline"

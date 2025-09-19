@@ -80,6 +80,10 @@ const PublicNavbar= () => {
                 Upload Certificate
               </a>
 
+              <a href="/issue" onClick={() => handleLinkClick('Upload Certificate')} className="text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors duration-200">
+                Issue Certificate
+              </a>
+
                    
 
 

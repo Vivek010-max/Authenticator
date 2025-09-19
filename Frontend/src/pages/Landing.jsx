@@ -59,12 +59,16 @@ function Hero() {
 
 
           <div className="mt-4 sm:mt-0 sm:ml-3 flex gap-3">
+            <Button asChild className="h-12 px-6 text-base bg-transparent border border-blue-700 text-blue-700 hover:bg-blue-50">
+            <Link to="/issue">Issue Cerificates </Link>
+          </Button>
           <Button asChild className="h-12 px-6 text-base bg-transparent border border-slate-300 text-slate-900 hover:bg-slate-100">
             <Link to="/institute/dashboard">Institute Panel</Link>
           </Button>
           <Button asChild className="h-12 px-6 text-base bg-transparent border border-blue-700 text-blue-700 hover:bg-blue-50">
             <Link to="/admin/dashboard">Admin Panel</Link>
           </Button>
+
           </div>
         </div>
 
