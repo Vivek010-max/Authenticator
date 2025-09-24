@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContex';
-import { Button } from './ui/Button';
-import ToggelSwitch from '../ui/ToggelSwitch';
-import { 
-  Home, 
-  Building2, 
-  Upload, 
-  FileCheck, 
-  Users, 
-  Settings, 
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContex";
+import { Button } from "./ui/Button";
+import ToggelSwitch from "../ui/ToggelSwitch";
+import {
+  Home,
+  Building2,
+  Upload,
+  FileCheck,
+  Users,
+  Settings,
   LogOut,
   Menu,
   X,
   User,
   Shield,
-  GraduationCap
-} from 'lucide-react';
+  GraduationCap,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const RoleBasedNavbar = () => {
   const { currentUser, logout } = useAuth();
@@ -27,11 +28,11 @@ const RoleBasedNavbar = () => {
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'admin':
+      case "admin":
         return <Shield className="h-5 w-5" />;
-      case 'institute':
+      case "institute":
         return <Building2 className="h-5 w-5" />;
-      case 'verifier':
+      case "verifier":
         return <GraduationCap className="h-5 w-5" />;
       default:
         return <User className="h-5 w-5" />;
@@ -40,14 +41,14 @@ const RoleBasedNavbar = () => {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'admin':
-        return 'text-red-600 dark:text-red-400';
-      case 'institute':
-        return 'text-blue-600 dark:text-blue-400';
-      case 'verifier':
-        return 'text-green-600 dark:text-green-400';
+      case "admin":
+        return "text-red-600 dark:text-red-400";
+      case "institute":
+        return "text-blue-600 dark:text-blue-400";
+      case "verifier":
+        return "text-green-600 dark:text-green-400";
       default:
-        return 'text-gray-600 dark:text-gray-400';
+        return "text-gray-600 dark:text-gray-400";
     }
   };
 
@@ -55,19 +56,19 @@ const RoleBasedNavbar = () => {
     if (!currentUser) return [];
 
     switch (currentUser.role) {
-      case 'admin':
+      case "admin":
         return [
-          { name: 'Dashboard', href: '/admin/dashboard', icon: Home },
-          { name: 'Institutes', href: '/admin/institutes', icon: Building2 },
-          { name: 'Verifications', href: '/admin/verifications', icon: FileCheck },
-          { name: 'Analytics', href: '/admin/analytics', icon: Users },
+          { name: "Dashboard", href: "/admin/dashboard", icon: Home },
+          { name: "Institutes", href: "/admin/institutes", icon: Building2 },
+          { name: "Verifications", href: "/admin/verifications", icon: FileCheck },
+          { name: "Analytics", href: "/admin/analytics", icon: Users },
         ];
-      case 'institute':
+      case "institute":
         return [
-          { name: 'Dashboard', href: '/institute/dashboard', icon: Home },
-          { name: 'Upload', href: '/institute/upload', icon: Upload },
-          { name: 'Certificates', href: '/institute/certificates', icon: FileCheck },
-          { name: 'Analytics', href: '/institute/analytics', icon: Users },
+          { name: "Dashboard", href: "/institute/dashboard", icon: Home },
+          { name: "Upload", href: "/institute/upload", icon: Upload },
+          { name: "Certificates", href: "/institute/certificates", icon: FileCheck },
+          { name: "Analytics", href: "/institute/analytics", icon: Users },
         ];
       default:
         return [];
@@ -78,17 +79,22 @@ const RoleBasedNavbar = () => {
 
   return (
     <nav className="bg-white rounded-b-full dark:bg-black shadow-sm border-b border-gray-500 dark:border-gray-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6  lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and Brand */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <img className="h-8 rounded-2xl w-8" src="/logo.ico" alt="Trustify Logo" />
-              <span onClick={
-() => window.location.href = '/' 
-              }  className="ml-2 text-xl font-bold text-gray-900 dark:text-white hover:cursor-pointer">
+              <img
+                className="h-8 rounded-2xl w-8"
+                src="/logo.ico"
+                alt="Trustify Logo"
+              />
+              <Link
+                to="/"
+                className="ml-2 text-xl font-bold text-gray-900 dark:text-white hover:cursor-pointer"
+              >
                 Trustify
-              </span>
+              </Link>
             </div>
           </div>
 
@@ -97,28 +103,27 @@ const RoleBasedNavbar = () => {
             {navigationItems.map((item) => {
               const Icon = item.icon;
               return (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <Icon className="h-4 w-4" />
                   <span>{item.name}</span>
-                </a>
+                </Link>
               );
             })}
           </div>
-            <div className='flex items-center rounded-2xl '> 
-            
-            <button>
-            <a href="/upload-verification" onClick={() => handleLinkClick('Upload Certificate')} className="text-gray-700 dark:text-gray-300 
-             transition-colors duration-200 hover:text-purple-300">
-                Upload Certificate
-              </a>
-            </button>
-            
 
-            </div>
+          {/* Upload Certificate Button */}
+          <div className="flex items-center rounded-2xl">
+            <Link
+              to="/upload-verification"
+              className="text-gray-700 dark:text-gray-300 transition-colors duration-200 hover:text-purple-300"
+            >
+              Upload Certificate
+            </Link>
+          </div>
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
@@ -126,10 +131,12 @@ const RoleBasedNavbar = () => {
               {getRoleIcon(currentUser?.role)}
               <div className="text-sm">
                 <p className="font-medium text-gray-900 dark:text-white">
-                  {currentUser?.name || currentUser?.institutionName || 'User'}
+                  {currentUser?.name ||
+                    currentUser?.institutionName ||
+                    "User"}
                 </p>
                 <p className={`text-xs ${getRoleColor(currentUser?.role)}`}>
-                  {currentUser?.role?.toUpperCase() || 'USER'}
+                  {currentUser?.role?.toUpperCase() || "USER"}
                 </p>
               </div>
             </div>
@@ -169,15 +176,15 @@ const RoleBasedNavbar = () => {
             {navigationItems.map((item) => {
               const Icon = item.icon;
               return (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Icon className="h-5 w-5" />
                   <span>{item.name}</span>
-                </a>
+                </Link>
               );
             })}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -185,10 +192,12 @@ const RoleBasedNavbar = () => {
                 {getRoleIcon(currentUser?.role)}
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {currentUser?.name || currentUser?.institutionName || 'User'}
+                    {currentUser?.name ||
+                      currentUser?.institutionName ||
+                      "User"}
                   </p>
                   <p className={`text-xs ${getRoleColor(currentUser?.role)}`}>
-                    {currentUser?.role?.toUpperCase() || 'USER'}
+                    {currentUser?.role?.toUpperCase() || "USER"}
                   </p>
                 </div>
               </div>
